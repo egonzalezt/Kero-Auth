@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <RootNamespace>Kero_Auth</RootNamespace>
+    <UserSecretsId>8b4b59b0-db07-47a4-a107-16d1aaaeacf2</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kero-Auth.Application\Kero-Auth.Application.csproj" />
+    <ProjectReference Include="..\Kero-Auth.Domain\Kero-Auth.Domain.csproj" />
+    <ProjectReference Include="..\Kero-Auth.Infrastructure\Kero-Auth.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
