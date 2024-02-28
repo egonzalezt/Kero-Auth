@@ -1,21 +1,25 @@
 ﻿namespace Kero_Auth.Infrastructure.Authentication;
 
-using FirebaseAdmin.Auth;
+using Firebase.Auth;
 using Kero_Auth.Domain.Authentication;
-using Kero_Auth.Domain.User;
 using System.Threading.Tasks;
+using User = Domain.User.User;
 
 public class AuthenticationService : IAuthenticationService
 {
-    public async Task<string> RegisterAsync(User user)
+    private readonly FirebaseAuthClient _firebaseAuth;
+    public AuthenticationService(FirebaseAuthClient firebaseAuth)
     {
-        var userArgs = new UserRecordArgs
-        {
-            Email = user.Email,
-            Password = user.Password
-        };
-
-        var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
-        return userRecord.Uid;
+        _firebaseAuth = firebaseAuth;
+    }
+    public async Task<string?> SignUpAsync(User user)
+    {
+        var userCredentials = await _firebaseAuth.CreateUserWithEmailAndPasswordAsync(user.Email, user.Password);
+        return userCredentials.User.Uid;
+    }
+    public async Task<string?> LogInAsync(User user)
+    {
+        var userCredentials = await _firebaseAuth.SignInWithEmailAndPasswordAsync(user.Email, user.Password);
+        return userCredentials is null ? null : await userCredentials.User.GetIdTokenAsync();
     }
 }

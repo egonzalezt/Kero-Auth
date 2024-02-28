@@ -20,7 +20,7 @@ public class UserRegisterUseCase : IUserRegisterUseCase
     {
         _logger.LogInformation("The registration for the user begins");
         var user = User.Build(userDto.Email, userDto.Password);
-        var id = await _authenticationService.RegisterAsync(user);
+        var id = await _authenticationService.SignUpAsync(user);
         user.SetId(id);
         _logger.LogInformation("Registration complete, new user created with Id {id}", id);
         return user;

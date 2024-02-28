@@ -1,7 +1,8 @@
 ﻿namespace Kero_Auth.Domain.Authentication;
-using Kero_Auth.Domain.User;
+using User = User.User;
 
 public interface IAuthenticationService
 {
-    Task<string> RegisterAsync(User user);
+    Task<string?> SignUpAsync(User user);
+    Task<string?> LogInAsync(User user);
 }

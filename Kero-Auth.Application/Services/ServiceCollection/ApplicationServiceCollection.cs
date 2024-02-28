@@ -9,5 +9,6 @@ public static class ApplicationServiceCollection
     public static void AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IUserRegisterUseCase, UserRegisterUseCase>();
+        services.AddScoped<IUserLogInUseCase, UserLoginUseCase>();
     }
 }
