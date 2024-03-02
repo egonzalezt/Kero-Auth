@@ -1,6 +1,7 @@
 ﻿namespace Kero_Auth.Middlewares;
 
 using Firebase.Auth;
+using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Kero_Auth.Domain.Authentication.Exceptions;
 using Kero_Auth.Domain.SharedKernel;
@@ -27,6 +28,10 @@ public class FirebaseAuthExceptionHandlerMiddleware
         {
             await _next(context);
         }
+        catch (FirebaseException ex)
+        {
+            await HandleFirebaseExceptionAsync(context, ex);
+        }
         catch (FirebaseAuthHttpException ex)
         {
             await HandleFirebaseAuthExceptionAsync(context, ex);
@@ -40,6 +45,29 @@ public class FirebaseAuthExceptionHandlerMiddleware
             _logger.LogError(ex.Message, ex);
             await HandleGenericExceptionAsync(context, ex);
         }
+    }
+
+
+    private Task HandleFirebaseExceptionAsync(HttpContext context, FirebaseException ex)
+    {
+        context.Response.ContentType = "application/json";
+
+        var (statusCode, errorMessage) = ex.ErrorCode switch
+        {
+            ErrorCode.Unauthenticated => ((int)HttpStatusCode.Unauthorized, "Request not authenticated due to missing, invalid, or expired OAuth token."),
+            ErrorCode.PermissionDenied => ((int)HttpStatusCode.Forbidden, "Kero found that you does not have sufficient permission."),
+            ErrorCode.NotFound => ((int)HttpStatusCode.NotFound, "Kero found that the specified resource is not found."),
+            ErrorCode.Conflict => ((int)HttpStatusCode.Conflict, "Concurrency conflict."),
+            ErrorCode.AlreadyExists => ((int)HttpStatusCode.Conflict, "Kero detects that the user that is trying to be created already exists."),
+            ErrorCode.Internal => ((int)HttpStatusCode.InternalServerError, "Internal server error."),
+            ErrorCode.Unavailable => ((int)HttpStatusCode.ServiceUnavailable, "Service unavailable."),
+            ErrorCode.DeadlineExceeded => ((int)HttpStatusCode.GatewayTimeout, "Request deadline exceeded."),
+            _ => ((int)HttpStatusCode.InternalServerError, "An unknown error occurred.")
+        };
+
+        context.Response.StatusCode = statusCode;
+        var result = JsonSerializer.Serialize(new { message = errorMessage });
+        return context.Response.WriteAsync(result);
     }
 
     private Task HandleFirebaseAuthExceptionAsync(HttpContext context, FirebaseAuthHttpException ex)
