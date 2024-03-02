@@ -1,7 +1,7 @@
 ﻿namespace Kero_Auth.Application.Services.ServiceCollection;
 
-using Kero_Auth.Application.Interfaces;
-using Kero_Auth.Application.UseCases;
+using Interfaces;
+using UseCases;
 using Microsoft.Extensions.DependencyInjection;
 
 public static class ApplicationServiceCollection
@@ -10,5 +10,6 @@ public static class ApplicationServiceCollection
     {
         services.AddScoped<IUserRegisterUseCase, UserRegisterUseCase>();
         services.AddScoped<IUserLogInUseCase, UserLoginUseCase>();
+        services.AddScoped<IPasswordChangeUseCase, PasswordChangeUseCase>();
     }
 }

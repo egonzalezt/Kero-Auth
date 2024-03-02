@@ -5,4 +5,5 @@ public interface IAuthenticationService
 {
     Task<string?> SignUpAsync(User user);
     Task<string?> LogInAsync(User user);
+    Task<string> ResetPasswordAsync(string email);
 }

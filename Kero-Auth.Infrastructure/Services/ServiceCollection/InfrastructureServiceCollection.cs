@@ -6,26 +6,36 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Kero_Auth.Infrastructure.Services.Options;
+using Newtonsoft.Json;
+using Kero_Auth.Domain.Authentication;
+using Kero_Auth.Infrastructure.Authentication;
+using FirebaseAdmin.Auth;
 
 public static class InfrastructureServiceCollection
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+        services.Configure<FirebaseOptions>(configuration.GetSection("Firebase"));
+        services.Configure<AuthOptions>(configuration.GetSection("Authentication"));
+        services.Configure<NoReplyOptions>(configuration.GetSection("NoReplyOptions"));
+
+        var firebaseOptions = configuration.GetSection("Firebase").Get<FirebaseOptions>();
+        var authOptions = configuration.GetSection("Authentication").Get<AuthOptions>();
+
         var appOptions = new AppOptions()
         {
-            Credential = GoogleCredential.FromFile("firebase.json")
+            Credential = GoogleCredential.FromJson(JsonConvert.SerializeObject(firebaseOptions))
         };
         FirebaseApp.Create(appOptions);
-
-        var apiKey = configuration.GetValue<string>("Authentication:ApiKey");
-        var projectId = configuration.GetValue<string>("Authentication:ProjectId");
+        services.AddSingleton(FirebaseAuth.DefaultInstance);
 
         services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig
         {
-            ApiKey = apiKey,
-            AuthDomain = $"{projectId}.firebaseapp.com",
+            ApiKey = authOptions.ApiKey,
+            AuthDomain = $"{firebaseOptions.project_id}.firebaseapp.com",
             Providers = new FirebaseAuthProvider[]
             {
                 new EmailProvider(),
@@ -33,20 +43,5 @@ public static class InfrastructureServiceCollection
             }
         }));
 
-        services.AddSingleton<Domain.Authentication.IAuthenticationService, Authentication.AuthenticationService>();
-
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
-        {
-            options.Authority = $"https://securetoken.google.com/{projectId}";
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = $"https://securetoken.google.com/{projectId}",
-                ValidateAudience = true,
-                ValidAudience = projectId,
-                ValidateLifetime = true
-            };
-        });
     }
 }

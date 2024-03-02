@@ -1,5 +1,5 @@
 using Kero_Auth.Application.Services.ServiceCollection;
-using Kero_Auth.Extensions;
+using Kero_Auth.Configuration.Extensions;
 using Kero_Auth.Infrastructure.Services.ServiceCollection;
 using Kero_Auth.Middlewares;
 using Microsoft.Extensions.FileProviders;
@@ -24,10 +24,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseMiddleware<FirebaseAuthExceptionHandlerMiddleware>();
 
 app.MapControllers();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
