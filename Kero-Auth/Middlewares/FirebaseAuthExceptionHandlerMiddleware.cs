@@ -2,9 +2,8 @@
 
 using Firebase.Auth;
 using FirebaseAdmin;
-using FirebaseAdmin.Auth;
-using Kero_Auth.Domain.Authentication.Exceptions;
-using Kero_Auth.Domain.SharedKernel;
+using Domain.Authentication.Exceptions;
+using Domain.SharedKernel;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;

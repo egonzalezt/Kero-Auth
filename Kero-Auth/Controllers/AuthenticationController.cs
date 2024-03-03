@@ -45,7 +45,6 @@ public class AuthenticationController : ControllerBase
         return Ok(response);
     }
 
-
     /// <summary>
     /// Logs in a user.
     /// </summary>
