@@ -5,5 +5,6 @@ using Domain.User.Dtos;
 
 public interface IUserRegisterUseCase
 {
-    Task<User> ExecuteAsync(UserDto userDto, CancellationToken cancellationToken);
+    Task<User> CreateWithPasswordExecuteAsync(UserDto userDto, CancellationToken cancellationToken);
+    Task<User> CreatePasswordLessAsync(UserOwnedDto userDto, CancellationToken cancellationToken);
 }

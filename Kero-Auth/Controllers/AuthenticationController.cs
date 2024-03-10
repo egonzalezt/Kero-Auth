@@ -2,49 +2,18 @@
 
 using Responses;
 using Microsoft.AspNetCore.Mvc;
-using Kero_Auth.Domain.User.Dtos;
-using Kero_Auth.Application.Interfaces;
-using Kero_Auth.Infrastructure.Services.Filters;
+using Domain.User.Dtos;
+using Application.Interfaces;
+using Infrastructure.Services.Filters;
 
 [ApiController]
 [Route("/auth")]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController(
+    IUserRegisterUseCase userRegisterUseCase,
+    IUserLogInUseCase userLogInUseCase,
+    IPasswordChangeUseCase passwordChangeUseCase
+        ) : ControllerBase
 {
-    private readonly ILogger<AuthenticationController> _logger;
-    private readonly IUserRegisterUseCase _userRegisterUseCase;
-    private readonly IUserLogInUseCase _userLogInUseCase;
-    private readonly IPasswordChangeUseCase _passwordChangeUseCase;
-
-    public AuthenticationController(
-        ILogger<AuthenticationController> logger, 
-        IUserRegisterUseCase userRegisterUseCase, 
-        IUserLogInUseCase userLogInUseCase,
-        IPasswordChangeUseCase passwordChangeUseCase
-        )
-    {
-        _logger = logger;
-        _userRegisterUseCase = userRegisterUseCase;
-        _userLogInUseCase = userLogInUseCase;
-        _passwordChangeUseCase = passwordChangeUseCase;
-    }
-
-    /// <summary>
-    /// Creates a new user.
-    /// </summary>
-    /// <param name="userDto">The user data.</param>
-    /// <returns>Returns the created user data.</returns>
-    /// <response code="200">Returns the created user data.</response>
-    /// <response code="400">If the password is weak, email already exists, or email is missing.</response>
-    [HttpPost("signup")]
-    [ProducesResponseType(typeof(UserCreated), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<UserCreated>> CreateUser(UserDto userDto)
-    {
-        var user = await _userRegisterUseCase.ExecuteAsync(userDto, CancellationToken.None);
-        var response = new UserCreated { Email = user.Email, Id = user.Id };
-        return Ok(response);
-    }
-
     /// <summary>
     /// Logs in a user.
     /// </summary>
@@ -63,7 +32,7 @@ public class AuthenticationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<ActionResult<UserAuthenticated>> LoginUser(UserDto userDto)
     {
-        var token = await _userLogInUseCase.ExecuteAsync(userDto, CancellationToken.None);
+        var token = await userLogInUseCase.ExecuteAsync(userDto, CancellationToken.None);
         var response = new UserAuthenticated
         {
             AccessToken = token
@@ -85,7 +54,7 @@ public class AuthenticationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<PasswordChangeResponse>> ChangePassword(EmailDto email)
     {
-        var noReplyEmail = await _passwordChangeUseCase.ExecuteAsync(email.Email);
+        var noReplyEmail = await passwordChangeUseCase.ExecuteAsync(email.Email);
         var response = PasswordChangeResponse.GenerateMessage(noReplyEmail);
         return Ok(response);
     }

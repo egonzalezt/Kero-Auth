@@ -5,7 +5,9 @@ using FirebaseAdmin.Auth;
 using Kero_Auth.Domain.Authentication;
 using Kero_Auth.Infrastructure.Services.Options;
 using Microsoft.Extensions.Options;
+using System.Threading;
 using System.Threading.Tasks;
+using FirebaseAuthException = FirebaseAdmin.Auth.FirebaseAuthException;
 using User = Domain.User.User;
 
 public class AuthenticationService : IAuthenticationService
@@ -21,9 +23,9 @@ public class AuthenticationService : IAuthenticationService
         _firebaseAuth = firebaseAuth;
     }
 
-    public async Task<string?> SignUpAsync(User user)
+    public async Task<string?> SignUpAsync(User user, CancellationToken cancellationToken)
     {
-        var userCredentials = await _firebaseAuth.CreateUserAsync(new UserRecordArgs() { Email = user.Email, Password = user.Password });
+        var userCredentials = await _firebaseAuth.CreateUserAsync(new UserRecordArgs() { Email = user.Email, Password = user.Password }, cancellationToken);
         return userCredentials.Uid;
     }
 
@@ -50,9 +52,22 @@ public class AuthenticationService : IAuthenticationService
         return await _firebaseAuth.GeneratePasswordResetLinkAsync(email);
     }
 
-    public async Task<string> SignUpWithoutPasswordAsync(string email)
+    public async Task<string> SignUpWithoutPasswordAsync(User user, CancellationToken cancellationToken)
     {
-        var userCredentials = await _firebaseAuth.CreateUserAsync(new UserRecordArgs { Email = email });
+        var userCredentials = await _firebaseAuth.CreateUserAsync(new UserRecordArgs { Email = user.Email, Uid = user.Id.ToString() }, cancellationToken);
         return userCredentials.Uid;
+    }
+
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+        try
+        {
+            await _firebaseAuth.GetUserByEmailAsync(email);
+            return true;
+        }
+        catch (FirebaseAuthException ex) when (ex.AuthErrorCode == AuthErrorCode.UserNotFound)
+        {
+            return false;
+        }
     }
 }

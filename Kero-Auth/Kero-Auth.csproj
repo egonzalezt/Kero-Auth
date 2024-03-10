@@ -16,12 +16,14 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+    <PackageReference Include="Frieren-Guard" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Kero-Auth.Application\Kero-Auth.Application.csproj" />
     <ProjectReference Include="..\Kero-Auth.Domain\Kero-Auth.Domain.csproj" />
     <ProjectReference Include="..\Kero-Auth.Infrastructure\Kero-Auth.Infrastructure.csproj" />
+    <ProjectReference Include="..\Kero-Auth.Workers\Kero-Auth.Workers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

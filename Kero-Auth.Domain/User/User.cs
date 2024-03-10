@@ -2,9 +2,9 @@
 
 public class User
 {
-    public string Id { get; private set; }
+    public Guid Id { get; private set; }
     public string Email { get; private set; }
-    public string Password { get; private set; }
+    public string? Password { get; private set; }
 
     private User(string email, string password)
     {
@@ -12,7 +12,12 @@ public class User
         Password = password;
     }
 
-    public void SetId(string id)
+    private User(string email)
+    {
+        Email = email;
+    }
+
+    public void SetId(Guid id)
     {
         Id = id;
     }
@@ -20,5 +25,10 @@ public class User
     public static User Build(string email, string password)
     {
         return new User(email, password);
+    }
+
+    public static User Build(string email)
+    {
+        return new User(email);
     }
 }

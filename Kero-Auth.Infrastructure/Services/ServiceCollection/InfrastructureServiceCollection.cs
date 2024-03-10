@@ -6,11 +6,16 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using Kero_Auth.Infrastructure.Services.Options;
+using Infrastructure.Services.Options;
 using Newtonsoft.Json;
-using Kero_Auth.Domain.Authentication;
-using Kero_Auth.Infrastructure.Authentication;
+using Domain.Authentication;
+using Infrastructure.Authentication;
 using FirebaseAdmin.Auth;
+using Infrastructure.MessageBroker.Publisher;
+using Domain.SharedKernel;
+using Domain.User.Dtos;
+using Infrastructure.NotificationService;
+using Kero_Auth.Infrastructure.MessageBroker.Options;
 
 public static class InfrastructureServiceCollection
 {
@@ -43,5 +48,8 @@ public static class InfrastructureServiceCollection
             }
         }));
 
+        services.AddSingleton<IMessageSender, RabbitMQMessageSender>();
+        services.AddSingleton<INotificationService<UserSignInUriDto>, UserCreatedNotifier>();
+        services.Configure<PublisherConfiguration>(configuration.GetSection("RabbitMQ:Queues:Publisher"));
     }
 }
