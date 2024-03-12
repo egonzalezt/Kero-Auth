@@ -10,6 +10,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Kero-Auth/Kero-Auth.csproj", "Kero-Auth/"]
+COPY ["Kero-Auth.Application/Kero-Auth.Application.csproj", "Kero-Auth.Application/"]
+COPY ["Kero-Auth.Domain/Kero-Auth.Domain.csproj", "Kero-Auth.Domain/"]
+COPY ["Kero-Auth.Infrastructure/Kero-Auth.Infrastructure.csproj", "Kero-Auth.Infrastructure/"]
+COPY ["Kero-Auth.Workers/Kero-Auth.Workers.csproj", "Kero-Auth.Workers/"]
 RUN dotnet restore "./Kero-Auth/./Kero-Auth.csproj"
 COPY . .
 WORKDIR "/src/Kero-Auth"

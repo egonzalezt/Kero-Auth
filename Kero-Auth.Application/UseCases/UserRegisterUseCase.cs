@@ -47,7 +47,8 @@ public class UserRegisterUseCase(IAuthenticationService authenticationService, I
         {
             Id = id,
             PasswordSetUri = passwordSetUri,
-            VerificationEmailUri = verificationEmailUri
+            VerificationEmailUri = verificationEmailUri,
+            Email = email,
         };
         notificationService.Notify(userSignInDto, UserOperations.FirstSignIn.ToString());
     }

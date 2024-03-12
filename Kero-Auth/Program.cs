@@ -12,8 +12,6 @@ var app = builder.Build();
 app.UseStaticFiles();
 app.AddSwaggerUi();
 
-app.UseHttpsRedirection();
-
 app.UseMiddleware<FirebaseAuthExceptionHandlerMiddleware>();
 
 app.MapControllers();
