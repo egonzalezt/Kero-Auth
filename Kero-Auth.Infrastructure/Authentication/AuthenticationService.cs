@@ -25,7 +25,7 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<string?> SignUpAsync(User user, CancellationToken cancellationToken)
     {
-        var userCredentials = await _firebaseAuth.CreateUserAsync(new UserRecordArgs() { Email = user.Email, Password = user.Password }, cancellationToken);
+        var userCredentials = await _firebaseAuth.CreateUserAsync(new UserRecordArgs() { Email = user.Email, Password = user.Password, DisplayName = user.Name }, cancellationToken);
         return userCredentials.Uid;
     }
 
@@ -54,7 +54,7 @@ public class AuthenticationService : IAuthenticationService
 
     public async Task<string> SignUpWithoutPasswordAsync(User user, CancellationToken cancellationToken)
     {
-        var userCredentials = await _firebaseAuth.CreateUserAsync(new UserRecordArgs { Email = user.Email, Uid = user.Id.ToString() }, cancellationToken);
+        var userCredentials = await _firebaseAuth.CreateUserAsync(new UserRecordArgs { Email = user.Email, Uid = user.Id.ToString(), DisplayName = user.Name }, cancellationToken);
         return userCredentials.Uid;
     }
 

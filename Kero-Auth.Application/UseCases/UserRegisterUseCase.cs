@@ -26,6 +26,7 @@ public class UserRegisterUseCase(IAuthenticationService authenticationService, I
     {
         logger.LogInformation("The registration for the user begins");
         var user = User.Build(userDto.Email);
+        user.SetName(userDto.Name);
         user.SetId(userDto.Id);
         var id = await _authenticationService.SignUpWithoutPasswordAsync(user, cancellationToken);
         var userExists = await _authenticationService.EmailExistsAsync(user.Email);
