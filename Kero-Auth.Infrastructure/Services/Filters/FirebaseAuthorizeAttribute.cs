@@ -16,13 +16,17 @@ public class FirebaseAuthorizationFilter : IAsyncAuthorizationFilter
 {
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
-        if (!context.HttpContext.Request.Headers.ContainsKey("Authorization"))
+        string authorizationHeader = string.Empty;
+
+        if (context.HttpContext.Request.Headers.ContainsKey("Authorization"))
         {
-            context.Result = new UnauthorizedResult();
-            return;
+            authorizationHeader = context.HttpContext.Request.Headers["Authorization"];
+        }
+        else if (context.HttpContext.Request.Headers.ContainsKey("X-Forwarded-Authorization"))
+        {
+            authorizationHeader = context.HttpContext.Request.Headers["X-Forwarded-Authorization"];
         }
 
-        string authorizationHeader = context.HttpContext.Request.Headers["Authorization"];
         if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
         {
             context.Result = new UnauthorizedResult();
