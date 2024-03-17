@@ -1,28 +1,24 @@
-﻿namespace Kero_Auth.Infrastructure.Services.Filters;
-
-using Microsoft.AspNetCore.Mvc;
+﻿using FirebaseAdmin.Auth;
 using Microsoft.AspNetCore.Mvc.Filters;
-using FirebaseAdmin.Auth;
-using System.Threading.Tasks;
-
-public class KeroAuthorizeAttribute : TypeFilterAttribute
-{
-    public KeroAuthorizeAttribute() : base(typeof(FirebaseAuthorizationFilter))
-    {
-    }
-}
+using Microsoft.AspNetCore.Mvc;
 
 public class FirebaseAuthorizationFilter : IAsyncAuthorizationFilter
 {
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
-        if (!context.HttpContext.Request.Headers.ContainsKey("Authorization"))
+        string authorizationHeader = null;
+
+        // Check for the Authorization header
+        if (context.HttpContext.Request.Headers.ContainsKey("Authorization"))
         {
-            context.Result = new UnauthorizedResult();
-            return;
+            authorizationHeader = context.HttpContext.Request.Headers["Authorization"];
+        }
+        // If Authorization header is not present, check for X-Forwarded-Authorization header
+        else if (context.HttpContext.Request.Headers.ContainsKey("X-Forwarded-Authorization"))
+        {
+            authorizationHeader = context.HttpContext.Request.Headers["X-Forwarded-Authorization"];
         }
 
-        string authorizationHeader = context.HttpContext.Request.Headers["Authorization"];
         if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
         {
             context.Result = new UnauthorizedResult();
