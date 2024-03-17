@@ -13,6 +13,16 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 app.UseStaticFiles();
 app.AddSwaggerUi();
+app.UseCors(builder =>
+{
+    builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader()
+           .WithExposedHeaders("X-Pagination-Total-Pages")
+           .WithExposedHeaders("X-Pagination-Next-Page")
+           .WithExposedHeaders("X-Pagination-Has-Next-Page")
+           .WithExposedHeaders("X-Pagination-Total-Pages");
+});
 
 app.UseMiddleware<FirebaseAuthExceptionHandlerMiddleware>();
 
