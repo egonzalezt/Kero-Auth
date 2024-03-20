@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Kero-Auth.Application\Kero-Auth.Application.csproj" />
     <ProjectReference Include="..\Kero-Auth.Domain\Kero-Auth.Domain.csproj" />
+    <ProjectReference Include="..\Kero-Auth.Infrastructure\Kero-Auth.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

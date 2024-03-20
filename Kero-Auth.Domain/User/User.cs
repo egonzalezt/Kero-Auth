@@ -6,7 +6,7 @@ public class User
     public string Email { get; private set; }
     public string? Password { get; private set; }
     public string? Name { get; private set; }
-
+    public bool Disabled { get; private set; } = false;
     private User(string email, string password, string name)
     {
         Email = email;
@@ -28,6 +28,11 @@ public class User
     public void SetId(Guid id)
     {
         Id = id;
+    }
+
+    public void SetDisabled(bool disabled)
+    {
+        Disabled = disabled;
     }
 
     public void SetName(string? name)

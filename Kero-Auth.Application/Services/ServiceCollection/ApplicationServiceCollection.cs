@@ -11,5 +11,6 @@ public static class ApplicationServiceCollection
         services.AddScoped<IUserRegisterUseCase, UserRegisterUseCase>();
         services.AddScoped<IUserLogInUseCase, UserLoginUseCase>();
         services.AddScoped<IPasswordChangeUseCase, PasswordChangeUseCase>();
+        services.AddScoped<IUnregisterUserUserCase, UnregisterUserUserCase>();
     }
 }
