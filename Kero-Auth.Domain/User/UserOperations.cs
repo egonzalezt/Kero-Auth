@@ -4,5 +4,7 @@ public enum UserOperations
 {
     CreateUser,
     UnregisterUser,
-    FirstSignIn
+    FirstSignIn,
+    TransferUser,
+    KeroResponse
 }

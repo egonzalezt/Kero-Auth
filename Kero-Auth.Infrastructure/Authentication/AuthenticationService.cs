@@ -70,4 +70,34 @@ public class AuthenticationService : IAuthenticationService
             return false;
         }
     }
+
+    public async Task<User?> GetUserAsync(Guid userId)
+    {
+        var existingUser = await _firebaseAuth.GetUserAsync(userId.ToString());
+        if (existingUser is null)
+        {
+            return null;
+        }
+        var userDto = User.Build(existingUser.Email);
+        userDto.SetId(Guid.Parse(existingUser.Uid));
+        userDto.SetDisabled(existingUser.Disabled);
+        return userDto;
+    }
+
+    public async Task<bool> DeactivateUserAsync(Guid userId)
+    {
+        var existingUser = await _firebaseAuth.GetUserAsync(userId.ToString());
+        if (existingUser == null)
+        {
+            return false;
+        }
+        var userRecordArgs = new UserRecordArgs
+        {
+            Disabled = true,
+            Uid = userId.ToString(),
+        };
+        await _firebaseAuth.UpdateUserAsync(userRecordArgs);
+        return true;
+    }
+
 }

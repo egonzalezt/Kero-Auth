@@ -18,5 +18,6 @@ public static class ServiceCollectionExtensions
         });
         services.Configure<ConsumerConfiguration>(configuration.GetSection("RabbitMQ:Queues:Consumer"));
         services.AddHostedService<UserConsumerWorker>();
+        services.AddHostedService<UserTransferConsumer>();
     }
 }

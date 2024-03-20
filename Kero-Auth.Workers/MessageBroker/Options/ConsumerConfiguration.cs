@@ -3,4 +3,5 @@
 public class ConsumerConfiguration
 {
     public string UserOwnedQueue { get; set; }
+    public string UserTransferQueue { get; set; }
 }
